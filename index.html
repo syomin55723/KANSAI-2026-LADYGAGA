@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Kansai 2026</title>
+    
+    <!-- PWA Setup -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#FDFCF8" />
+    
+    <!-- iOS Specific Setup -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Kansai Trip" />
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5229/5229344.png" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Zen Kaku Gothic New', sans-serif;
+        background-color: #FDFCF8; /* Warmer Washi Paper */
+        color: #2D2926; /* Sumi Ink */
+        -webkit-tap-highlight-color: transparent;
+        /* Prevent bounce scroll on body to feel more like native app */
+        overscroll-behavior-y: none;
+        overflow-x: hidden; /* Fix sticky header issue by moving overflow here */
+      }
+      .font-serif-jp {
+        font-family: 'Noto Serif JP', serif;
+      }
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      /* Hide scrollbar for IE, Edge and Firefox */
+      .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+      
+      /* Safe Area Utilities */
+      .pt-safe-top {
+        padding-top: max(env(safe-area-inset-top), 1.5rem);
+      }
+      
+      /* 3D Flip Utilities */
+      .perspective-1000 { perspective: 1000px; }
+      .transform-style-3d { transform-style: preserve-3d; }
+      .backface-hidden { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+      .rotate-y-180 { transform: rotateY(180deg); }
+
+      /* Apple-like Premium Reveal Animation */
+      .reveal-hidden {
+        opacity: 0;
+        transform: translateY(40px) scale(0.96);
+        filter: blur(10px); /* Stronger initial blur for that "glass" feel */
+        will-change: opacity, transform, filter;
+      }
+      .reveal-visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+        /* Quint Ease Out - Very smooth deceleration */
+        transition: opacity 0.7s cubic-bezier(0.23, 1, 0.32, 1), 
+                    transform 0.7s cubic-bezier(0.23, 1, 0.32, 1),
+                    filter 0.7s ease-out;
+      }
+
+      @keyframes slideUp {
+        from { transform: translate(-50%, 100%); opacity: 0; }
+        to { transform: translate(-50%, 0); opacity: 1; }
+      }
+      .animate-slideUp {
+        animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+
+      /* Golden Shimmer Effect - Faster & More Dynamic */
+      @keyframes goldFlow {
+        0% { background-position: 100% 0; }
+        100% { background-position: -100% 0; }
+      }
+      .bg-gold-shimmer {
+        background: linear-gradient(
+          120deg, 
+          #C5A059 10%, 
+          #E6C888 35%, 
+          #FFFACD 50%, 
+          #E6C888 65%, 
+          #C5A059 90%
+        );
+        background-size: 200% 100%;
+        animation: goldFlow 1.2s linear infinite;
+      }
+
+      /* Red Shimmer Effect for Daruma */
+      @keyframes redFlow {
+        0% { background-position: 100% 0; }
+        100% { background-position: -100% 0; }
+      }
+      .bg-red-shimmer {
+        background: linear-gradient(
+          120deg, 
+          #C9171E 10%, 
+          #E87A90 35%, 
+          #FFD1D1 50%, 
+          #E87A90 65%, 
+          #C9171E 90%
+        );
+        background-size: 200% 100%;
+        animation: redFlow 1.2s linear infinite;
+      }
+
+      /* Alert/Warning Stripes Effect */
+      @keyframes alertFlow {
+        0% { background-position: 0 0; }
+        100% { background-position: 28px 28px; }
+      }
+      .bg-alert-shimmer {
+        background: repeating-linear-gradient(
+          -45deg,
+          #FEE2E2,
+          #FEE2E2 10px,
+          #FEF3C7 10px,
+          #FEF3C7 20px
+        );
+        background-size: 200% 200%;
+        animation: alertFlow 1s linear infinite;
+      }
+
+      /* Spirit Fire Float Animation */
+      @keyframes spiritFloat {
+        0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+        50% { transform: translateY(-3px) scale(1.1); opacity: 0.8; }
+      }
+      .animate-spirit {
+        animation: spiritFloat 3s ease-in-out infinite;
+      }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
